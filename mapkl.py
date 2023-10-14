@@ -102,8 +102,11 @@ regions = {'Bangsar': [
         (3.1300817056560275, 101.59657197017448),
         (3.12873404090602, 101.63503775348423),
         (3.1550800734689615, 101.59488056882898)],
-    'TTDI': [
-        (3.138249, 101.63008)
+    'Bukit Bintang': [
+        (3.153035935376106, 101.7097521093033),
+        (3.1662218740184365, 101.71750229581187),
+        (3.1408348512615536, 101.70754993813944),
+        (3.16200592618416, 101.74212885991994)
         ],
     'Bukit Jalil': [
         (3.052161, 101.671278),
@@ -137,17 +140,14 @@ regions = {'Bangsar': [
         (3.036385337758758, 101.76508320930336),
         (3.0531466874387894, 101.73909438046711),
         (3.095408586930257, 101.73852216697564)],
+    'TTDI': [
+        (3.138249, 101.63008)
+        ],
     'Seri Kembandang': [
         (3.017641745178442, 101.69612923218372)
         ],
     'Jalan Ipoh': [
         (3.179423396637816, 101.68323264272207)
-        ],
-    'Bukit Bintang': [
-        (3.153035935376106, 101.7097521093033),
-        (3.1662218740184365, 101.71750229581187),
-        (3.1408348512615536, 101.70754993813944),
-        (3.16200592618416, 101.74212885991994)
         ]
     }
 
@@ -237,28 +237,61 @@ HeatMap(combined_data).add_to(m)
 # Save the map to an HTML file
 st_folium(m,height=600,  width=700)
 
-if selection_type == "Studios":
-    # Check if there are studios in any region for the selection
-    studios_exist = any([s for s in selections if s in region_studio_mapping[r]] for r, coords in regions.items())
+# Function to format regions and studios in columns
+def format_columns(regions_studios):
+    # Create HTML table with no borders
+    table_html = "<table style='width: 100%; border: 0;'><tr style='border: 0;'>"
+    count = 0
+    total_regions = len(regions_studios)
+    remaining_regions = total_regions % 3
+
+    for r, studios in regions_studios.items():
+        if studios:  # Only consider regions with studios
+            # Check if it's the last row and not a multiple of 3
+            if count >= total_regions - remaining_regions and remaining_regions != 0:
+                if remaining_regions == 1 and count % 3 == 0:  # If only one region, add padding on both sides
+                    table_html += "<td style='border: 0;'></td>"
+                elif remaining_regions == 2 and count % 3 == 0:  # If two regions, and it's the first one, just add it
+                    pass
+                elif remaining_regions == 2 and count % 3 == 1:  # If two regions, and it's the second one, add padding to the left first
+                    table_html += "<td style='border: 0;'></td>"
+            
+            column_html = f"<td style='padding: 8px; width: 33%; border: 0;'><b>{r}:</b><br>"
+            column_html += '<br>'.join(studios)
+            column_html += "</td>"
+            table_html += column_html
+            
+            count += 1
+
+            if count % 3 == 0 and count != total_regions:
+                table_html += "</tr><tr style='border: 0;'>"
+            elif remaining_regions == 1 and count == total_regions:  # If only one region, add padding on the right after displaying it
+                table_html += "<td style='border: 0;'></td>"
     
-    if studios_exist:
+    table_html += "</tr></table>"
+    return table_html
+
+
+
+
+if selection_type == "Studios":
+    regions_studios = {}
+    for r, coords in regions.items():
+        studios_in_region = [s for s in selections if s in region_studio_mapping[r]]
+        if studios_in_region:
+            regions_studios[r] = studios_in_region
+
+    if regions_studios:
         st.write("**Selected Studios in Their Respective Region:**")
-        for r, coords in regions.items():
-            studios_in_region = [s for s in selections if s in region_studio_mapping[r]]
-            if studios_in_region:
-                st.write(f"**{r}:**")
-                for s in studios_in_region:
-                    st.write(f"- {s}")
+        st.markdown(format_columns(regions_studios), unsafe_allow_html=True)
 
 else:
-    # Check if there are studios in the selected regions
-    studios_exist = any(region_studio_mapping[r] for r in selections)
-    
-    if studios_exist:
+    regions_studios = {}
+    for r in selections:
+        studios_in_region = region_studio_mapping[r]
+        if studios_in_region:
+            regions_studios[r] = studios_in_region
+
+    if regions_studios:
         st.write("**Studios in Selected Regions:**")
-        for r in selections:
-            studios_in_region = region_studio_mapping[r]
-            if studios_in_region:
-                st.write(f"**{r}:**")
-                for s in studios_in_region:
-                    st.write(f"- {s}")
+        st.markdown(format_columns(regions_studios), unsafe_allow_html=True)
