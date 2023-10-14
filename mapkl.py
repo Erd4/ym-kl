@@ -2,8 +2,6 @@ import streamlit as st
 from streamlit_folium import st_folium
 import folium
 from folium.plugins import HeatMap
-import streamlit.components.v1 as components
-
 
 # Create a base map centered around Kuala Lumpur
 m = folium.Map(location=[3.1390, 101.6869], zoom_start=12)
@@ -145,19 +143,16 @@ regions = {'Bangsar': [
         ]
     }
 
-# Create two columns. The first one for the toggle and selections, the second one for the map.
-col1, col2 = st.columns(2)
-
-# Radio button for Studios vs. Regions in the first column
-selection_type = col1.radio("Select by:", ["Studios", "Regions"])
+# Radio button for Studios vs. Regions
+selection_type = st.radio("Select by:", ["Studios", "Regions"])
 
 if selection_type == "Studios":
-    # Implementing the "Select All" checkbox for studios in the first column
-    select_all = col1.checkbox("Select all Studios")
+    # Implementing the "Select All" checkbox for studios
+    select_all = st.checkbox("Select all Studios")
     if select_all:
         selections = list(data.keys())
     else:
-        selections = col1.multiselect("Which Yoga Studio do you want to see?", list(data.keys()))
+        selections = st.multiselect("Which Yoga Studio do you want to see?", list(data.keys()))
 
     # Combine data from all selected studios into a single list and add markers with popups
     combined_data = []
@@ -175,12 +170,12 @@ if selection_type == "Studios":
             ).add_to(m)
 
 else:
-    # Implementing the "Select All" checkbox for regions in the first column
-    select_all = col1.checkbox("Select all Regions")
+    # Implementing the "Select All" checkbox for regions
+    select_all = st.checkbox("Select all Regions")
     if select_all:
         selections = list(regions.keys())
     else:
-        selections = col1.multiselect("Which Region do you want to see?", list(regions.keys()))
+        selections = st.multiselect("Which Region do you want to see?", list(regions.keys()))
 
     # Combine data from all selected regions into a single list and add markers with popups
     combined_data = []
@@ -197,13 +192,9 @@ else:
                 popup=r
             ).add_to(m)
 
+
 # Add a single heatmap to the base map using the combined data
 HeatMap(combined_data).add_to(m)
 
-# Save the Folium map to an HTML file
-map_file = "/mnt/data/folium_map.html"
-m.save(map_file)
-
-# Display the map in the second column using an iframe
-iframe_html = f'<iframe src="file://{map_file}" width=700 height=600></iframe>'
-col2.write(iframe_html, unsafe_allow_html=True)
+# Save the map to an HTML file
+st_folium(m,height=600,  width=700)
