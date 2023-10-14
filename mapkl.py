@@ -2,6 +2,8 @@ import streamlit as st
 from streamlit_folium import st_folium
 import folium
 from folium.plugins import HeatMap
+import streamlit.components.v1 as components
+
 
 # Create a base map centered around Kuala Lumpur
 m = folium.Map(location=[3.1390, 101.6869], zoom_start=12)
@@ -198,9 +200,10 @@ else:
 # Add a single heatmap to the base map using the combined data
 HeatMap(combined_data).add_to(m)
 
-# Display the map in the second column
-# Convert the Folium map to an HTML string
-html = m._repr_html_()
+# Save the Folium map to an HTML file
+map_file = "/mnt/data/folium_map.html"
+m.save(map_file)
 
-# Use the column's write function to display the map
-col2.write(html, unsafe_allow_html=True)
+# Display the map in the second column using an iframe
+iframe_html = f'<iframe src="file://{map_file}" width=700 height=600></iframe>'
+col2.write(iframe_html, unsafe_allow_html=True)
