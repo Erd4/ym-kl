@@ -3,6 +3,11 @@ from streamlit_folium import st_folium
 import folium
 from folium.plugins import HeatMap
 
+st.set_page_config(
+    page_title="KL Competitor Heatmap",
+    page_icon="🧘🏻‍♀️",
+    )
+
 #creating a title for the app
 st.title("Heatmap of KL's Yoga Market")
 
