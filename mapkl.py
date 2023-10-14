@@ -1,5 +1,5 @@
 import streamlit as st
-from streamlit_folium import st_folium
+import streamlit_folium as st_folium
 import folium
 from folium.plugins import HeatMap
 
