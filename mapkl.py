@@ -107,4 +107,4 @@ for s in selections:
 HeatMap(combined_data).add_to(m)
 
 # Save the map to an HTML file
-st_folium(m,height=600,  width=700)
+st_folium.folium(m,height=600,  width=700)
