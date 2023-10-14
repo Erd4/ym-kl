@@ -169,6 +169,16 @@ def find_studios(lat, lon, data):
 # Radio button for Studios vs. Regions
 selection_type = st.radio("Select by:", ["Studios", "Regions"])
 
+# Initialize a dictionary to store region-wise studio lists
+region_studio_mapping = {region: [] for region in regions}
+
+# Update the mapping based on data
+for studio, coords in data.items():
+    for coord in coords:
+        region = find_region(coord[0], coord[1], regions)
+        if region:
+            region_studio_mapping[region].append(studio)
+
 if selection_type == "Studios":
     # Implementing the "Select All" checkbox for studios
     select_all = st.checkbox("Select all Studios")
@@ -226,3 +236,29 @@ HeatMap(combined_data).add_to(m)
 
 # Save the map to an HTML file
 st_folium(m,height=600,  width=700)
+
+if selection_type == "Studios":
+    # Check if there are studios in any region for the selection
+    studios_exist = any([s for s in selections if s in region_studio_mapping[r]] for r, coords in regions.items())
+    
+    if studios_exist:
+        st.write("**Selected Studios in Their Respective Region:**")
+        for r, coords in regions.items():
+            studios_in_region = [s for s in selections if s in region_studio_mapping[r]]
+            if studios_in_region:
+                st.write(f"**{r}:**")
+                for s in studios_in_region:
+                    st.write(f"- {s}")
+
+else:
+    # Check if there are studios in the selected regions
+    studios_exist = any(region_studio_mapping[r] for r in selections)
+    
+    if studios_exist:
+        st.write("**Studios in Selected Regions:**")
+        for r in selections:
+            studios_in_region = region_studio_mapping[r]
+            if studios_in_region:
+                st.write(f"**{r}:**")
+                for s in studios_in_region:
+                    st.write(f"- {s}")
