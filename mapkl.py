@@ -3,8 +3,11 @@ from streamlit_folium import st_folium
 import folium
 from folium.plugins import HeatMap
 
+#creating a title for the app
+st.title("Heatmap of KL's Yoga Market")
+
 # Create a base map centered around Kuala Lumpur
-m = folium.Map(location=[3.1390, 101.6869], zoom_start=12)
+m = folium.Map(location=[3.1390, 101.6869], zoom_start=11)
 
 # Your list of latitudes and longitudes
 data = {'The Flow Studio': [
