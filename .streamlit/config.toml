@@ -1,6 +1,6 @@
 [browser]
 # Set your desired browser tab title
-pageTitle = "Your Desired Tab Title"
+pageTitle = "KL Competitor Heatmap"
 
 # Set the path to your favicon (assuming it's in the same directory as 
 your Streamlit script)
