@@ -190,7 +190,7 @@ def format_columns(regions_studios):
                 elif remaining_regions == 2 and count % 3 == 1:  # If two regions, and it's the second one, add padding to the left first
                     table_html += "<td style='border: 0;'></td>"
             
-            column_html = f"<td style='padding: 8px; width: 33%; border: 0;'><b>{r}:</b><br>"
+            column_html = f"<td style='padding: 8px; width: 33%; border: 0; vertical-align: top;'><b>{r}:</b><br>"
             column_html += '<br>'.join(studios)
             column_html += "</td>"
             table_html += column_html
